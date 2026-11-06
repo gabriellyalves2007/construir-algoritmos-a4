@@ -12,12 +12,17 @@ def solution(arquivo):
 
     # Cada linha de X representa [1, area, quartos].
     # A coluna de uns permite estimar o intercepto; id_imovel nao entra.
-    X = np.column_stack((np.ones(len(df)), area, quartos))
+    matriz = []
+    for i in range(len(area)):
+        matriz.append([1, area[i], quartos[i]])
+    X = np.array(matriz)
 
-    # Minimos quadrados: minimizar ||X @ beta - y||^2.
-    # Equacoes normais: (X.T @ X) @ beta = X.T @ y.
-    # lstsq resolve o ajuste sem calcular explicitamente uma inversa.
-    beta = np.linalg.lstsq(X, y, rcond=None)[0]
+    # Formula matricial apresentada no slide de Regressao linear:
+    # beta = inversa(X transposta * X) * X transposta * y
+    transposta = np.transpose(X)
+    produto = np.dot(transposta, X)
+    inversa = np.linalg.inv(produto)
+    beta = np.dot(np.dot(inversa, transposta), y)
     return beta.tolist()
 
 
